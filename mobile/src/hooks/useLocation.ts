@@ -69,6 +69,10 @@ export function useLocation() {
 
   const checkDeparture = useCallback(async () => {
     if (!homeCoords) return false;
+    const perms = await requestLocationPermissions();
+    if (!perms.foreground) {
+      throw new Error("Location permission not granted");
+    }
     return checkDepartureNow(homeCoords);
   }, [homeCoords]);
 

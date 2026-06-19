@@ -68,7 +68,11 @@ export async function requestLocationPermissions(): Promise<{
 }
 
 export async function getCurrentCoords(): Promise<Coords | null> {
-  const { status } = await Location.getForegroundPermissionsAsync();
+  let { status } = await Location.getForegroundPermissionsAsync();
+  if (status !== "granted") {
+    const req = await Location.requestForegroundPermissionsAsync();
+    status = req.status;
+  }
   if (status !== "granted") return null;
   const pos = await Location.getCurrentPositionAsync({
     accuracy: Location.Accuracy.Balanced,
