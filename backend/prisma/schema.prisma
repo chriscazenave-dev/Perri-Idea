@@ -1,0 +1,114 @@
+// PackPal Prisma schema
+// Smart packing assistant: trips, generated packing lists, reusable templates,
+// forgotten-item memory, and trip activities.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TripPurpose {
+  LEISURE
+  WORK
+  CONFERENCE
+  ADVENTURE
+  OTHER
+}
+
+enum TripStatus {
+  PLANNING
+  ACTIVE
+  COMPLETED
+}
+
+enum ItemCategory {
+  CLOTHING
+  TOILETRIES
+  ELECTRONICS
+  DOCUMENTS
+  ACCESSORIES
+  GEAR
+  OTHER
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  homeLatitude  Float?
+  homeLongitude Float?
+  createdAt     DateTime @default(now())
+
+  trips          Trip[]
+  forgottenItems ForgottenItem[]
+}
+
+model Trip {
+  id             String      @id @default(cuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  destination    String
+  destinationLat Float?
+  destinationLon Float?
+  purpose        TripPurpose @default(LEISURE)
+  startDate      DateTime?
+  endDate        DateTime?
+  notes          String?
+  isTemplate     Boolean     @default(false)
+  templateId     String?
+  template       Trip?       @relation("TemplateTrips", fields: [templateId], references: [id], onDelete: SetNull)
+  derivedTrips   Trip[]      @relation("TemplateTrips")
+  status         TripStatus  @default(PLANNING)
+  createdAt      DateTime    @default(now())
+
+  packingItems   PackingItem[]
+  activities     TripActivity[]
+  forgottenItems ForgottenItem[]
+
+  @@index([userId])
+  @@index([templateId])
+}
+
+model PackingItem {
+  id          String       @id @default(cuid())
+  tripId      String
+  trip        Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  name        String
+  category    ItemCategory @default(OTHER)
+  isPacked    Boolean      @default(false)
+  quantity    Int          @default(1)
+  notes       String?
+  isEssential Boolean      @default(false)
+
+  @@index([tripId])
+}
+
+model ForgottenItem {
+  id                String       @id @default(cuid())
+  userId            String
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemName          String
+  category          ItemCategory @default(OTHER)
+  forgottenCount    Int          @default(1)
+  lastForgottenDate DateTime     @default(now())
+  tripId            String?
+  trip              Trip?        @relation(fields: [tripId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, itemName])
+  @@index([userId])
+}
+
+model TripActivity {
+  id     String @id @default(cuid())
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  name   String
+  type   String
+
+  @@index([tripId])
+}
