@@ -215,9 +215,11 @@ export function CreateTripScreen() {
           disabled={!canSubmit}
         >
           {submitting ? (
-            <ActivityIndicator color={colors.textInverse} />
+            <ActivityIndicator color={colors.textMuted} />
           ) : (
-            <Text style={styles.submitText}>Generate Packing List</Text>
+            <Text style={[styles.submitText, !canSubmit && styles.submitTextDisabled]}>
+              Generate Packing List
+            </Text>
           )}
         </Pressable>
       </ScrollView>
@@ -308,4 +310,5 @@ const styles = StyleSheet.create({
   },
   submitDisabled: { backgroundColor: colors.border },
   submitText: { color: colors.textInverse, fontWeight: "800", fontSize: 16 },
+  submitTextDisabled: { color: colors.textMuted },
 });
