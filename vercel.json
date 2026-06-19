@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd mobile && npm install --legacy-peer-deps",
+  "buildCommand": "cd mobile && EXPO_PUBLIC_DEMO_MODE=1 npx expo export --platform web --output-dir dist",
+  "outputDirectory": "mobile/dist"
+}
