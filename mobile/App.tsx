@@ -33,6 +33,10 @@ function Tabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+        },
         tabBarIcon: ({ focused }) => (
           <Text style={{ fontSize: focused ? 22 : 20 }}>
             {TAB_ICONS[route.name]}

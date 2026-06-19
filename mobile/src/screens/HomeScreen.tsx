@@ -50,13 +50,20 @@ export function HomeScreen() {
   }, [load]);
 
   const onCheckDeparture = useCallback(async () => {
-    const left = await checkDeparture();
-    Alert.alert(
-      left ? "You've left home!" : "Still home",
-      left
-        ? "Sent a departure reminder for your upcoming trip."
-        : "You're within your home area. No departure reminder needed."
-    );
+    try {
+      const left = await checkDeparture();
+      Alert.alert(
+        left ? "You've left home!" : "Still home",
+        left
+          ? "Sent a departure reminder for your upcoming trip."
+          : "You're within your home area. No departure reminder needed."
+      );
+    } catch (e) {
+      Alert.alert(
+        "Location unavailable",
+        "Could not check your location. Please make sure location services are enabled and permissions are granted."
+      );
+    }
   }, [checkDeparture]);
 
   const openTrip = useCallback(
@@ -151,13 +158,15 @@ const styles = StyleSheet.create({
   title: { fontSize: 32, fontWeight: "800", color: colors.text },
   subtitle: { fontSize: 15, color: colors.textMuted, marginBottom: spacing.lg },
   reminder: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: "#1A1A2E",
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  reminderTitle: { fontWeight: "700", color: "#92400E", fontSize: 15 },
-  reminderBody: { color: "#92400E", marginTop: 2, fontSize: 13 },
+  reminderTitle: { fontWeight: "700", color: "#FBBF24", fontSize: 15 },
+  reminderBody: { color: colors.textMuted, marginTop: 2, fontSize: 13 },
   actions: { flexDirection: "row", gap: spacing.md, marginBottom: spacing.md },
   action: {
     flex: 1,
